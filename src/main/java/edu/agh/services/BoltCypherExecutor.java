@@ -3,7 +3,6 @@ package edu.agh.services;
 import org.neo4j.ogm.session.Session;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 public class BoltCypherExecutor implements CypherExecutor {

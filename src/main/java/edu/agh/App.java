@@ -8,6 +8,7 @@ public class App
 {
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!" );
+        CmdExecutor executor=new CmdExecutor();
+        executor.execute("get_recommendation_by_category");
     }
 }

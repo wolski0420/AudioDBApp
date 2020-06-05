@@ -1,14 +1,12 @@
 package edu.agh.services;
 
+import edu.agh.entities.Artist;
 import edu.agh.entities.Category;
 import edu.agh.entities.Listener;
 import edu.agh.entities.Song;
 import org.neo4j.ogm.model.Result;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ListenerService extends GenericService<Listener>{
     @Override
@@ -16,29 +14,47 @@ public class ListenerService extends GenericService<Listener>{
         return Listener.class;
     }
 
-    //recommendation for particular listener based on his previous liked categories
-    Collection<Song> getRecommendationByCategory(final Listener listener)
+
+    //@TODO upgrade this query, because it shows songs which have already been liked or listened to
+        public Collection<Song> getRecommendationsByCategory(final Listener listener)
     {
-        //tutaj coś ala:
-        //    MATCH (greet:Greeting) where greet.message='hello, world'
-//        CREATE (product:Product{title:'elo'}) MERGE (product)-[IS:IN]->(greet)
-//KATEGORIE DO PIOSENEK POD WARUNKIEM ŻE SIĘ NAJPIERW STWORZY KATEGORIE -- TRZEBA SPRAWDZIĆ WCZEŚNIEJ CZY KATEGORIA ISTNIEJE
-//MATCH (category:Category) where category.name='1'
-//CREATE (song:Song{title:'2', year:'3'}) MERGE (song)->[IS_OF]->(category)
-        final Category likedCategory=listener.getLikedCategory();
+        final Category likedCategory=listener.getLikedOrSuggestedCategory();
         final Map<String,Object> params=new HashMap<>();
         params.put("category",likedCategory);
-        final String query="MATCH (n:Song) WHERE n.category=$category RETURN n";
-        Result result=session.query(query,params);
-        return resultToSongCollection(result);
-
+        final String query="MATCH (n:Song{category:'$category'}) RETURN n";
+        return resultToSongCollection(executor.query(query,params));
     }
 
-    //@TODO
-    private Collection<Song> resultToSongCollection(Result result)
-    {
-        Collection<Song> songs=new ArrayList<>();
-        result.forEach();
 
+//        @TODO TEST IT SOMEHOW, but the query should be ok
+    public Collection<Song> getRecommendationsBySimilarListeners(Listener listener)
+    {
+        final Map<String,Object> params=new HashMap<>();
+        params.put("listener_name",listener.getName());
+        final String query="MATCH (:Listener {name:$listener_name})->(song:Song)<-(anonther_list:Listener)" +
+                "MATCH (anonther_list)->(anonther_list_song:Song) " +
+                "WHERE (anonther_list_song<>song) RETURN anonther_list_song";
+        return resultToSongCollection(executor.query(query,params));
+    }
+    //        @TODO fill the query, test it maybe
+    public Collection<Song> getRecommendationsByArtist(Listener listener)
+    {
+        final Artist artist=listener.getLikedArtist();
+        final Map<String,Object> params=new HashMap<>();
+        params.put("liked_artist",artist.getName());
+        final String query="MATCH (:Song {})"
+        return resultToSongCollection(executor.query(query,params));
+    }
+
+
+    private Collection<Song> resultToSongCollection(Iterator<Map<String,Object>> iterator)
+    {
+        final Collection<Song> songs=new ArrayList<>();
+        while (iterator.hasNext())
+        {
+            Map<String,Object> entry=iterator.next();
+            entry.forEach((string,object)->songs.add((Song)object));
+        }
+        return songs;
     }
 }

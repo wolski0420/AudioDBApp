@@ -24,8 +24,13 @@ public class Neo4jSessionFactory {
         return instance;
     }
 
-    public Session getNeo4jSession()
+    public Session openNeo4jSession()
     {
         return sf.openSession();
+    }
+
+    public void closeSession()
+    {
+        sf.close();
     }
 }

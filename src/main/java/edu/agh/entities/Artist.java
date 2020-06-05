@@ -1,5 +1,6 @@
 package edu.agh.entities;
 
+import lombok.Getter;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
@@ -8,6 +9,7 @@ import java.util.Collection;
 
 @NodeEntity
 public class Artist extends Entity {
+    @Getter
     String name;
     @Relationship(type="PERFORMED_BY",direction = Relationship.INCOMING)
     Collection<Song> songs=new ArrayList<>();
