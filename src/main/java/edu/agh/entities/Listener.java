@@ -32,10 +32,10 @@ public class Listener extends Entity {
 
     public void addViewedSongs(Collection<Song> viewedSongs)
     {
-        this.likedSongs.addAll(viewedSongs);
+        this.viewedSongs.addAll(viewedSongs);
     }
 
-    public Set<Category> getLikedCategory()
+    public Set<Category> getLikedCategories()
     {
         EnumSet<Category> categories = EnumSet.noneOf(Category.class);
 
@@ -47,7 +47,7 @@ public class Listener extends Entity {
         return categories;
     }
 
-    public Set<Artist> getLikedArtist()
+    public Set<Artist> getLikedArtists()
     {
         Set<Artist> artists = new HashSet<>();
 

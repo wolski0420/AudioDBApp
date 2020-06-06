@@ -7,10 +7,13 @@ import edu.agh.entities.Song;
 import edu.agh.services.ArtistService;
 import edu.agh.services.ListenerService;
 import edu.agh.services.SongService;
+import org.neo4j.ogm.session.Session;
+import org.neo4j.ogm.session.SessionFactory;
 
 import java.util.*;
 
 public class CmdExecutor {
+    private static final String CLEAR="clear";
     private static final String ADD_SONG_CMD="add_song";
     private static final String ADD_ARTIST_CMD="add_artist";
     private static final String ADD_LISTENER_CMD="add_listener";
@@ -28,30 +31,8 @@ public class CmdExecutor {
 
         if(words[0].equalsIgnoreCase(ADD_SONG_CMD))
         {
-            SongService service = new SongService();
-            Collection<String> notCreatedArtists = service.addNewSong(words[1],words[2],Arrays.copyOfRange(words,3,words.length));
-            service.closeSession();
-            //System.out.println(notCreatedArtists);
-
-            for(String artistName: notCreatedArtists){
-                ArtistService service2 = new ArtistService();
-                Collection<String> notCreatedSongs = service2.addNewArtist(artistName,new String[]{words[1]});
-                service2.closeSession();
-                //System.out.println(notCreatedSongs);
-            }
-
-
-
-            Artist artist = new Artist("artist");
-            List<Song> liked=new ArrayList<>();
-            Song s=new Song("title",Collections.singletonList(artist));
-            s.setCategory(Category.Pop);
-            liked.add(s);
-            Listener l1=new Listener("Konrad",liked,liked);
-            //System.out.println(listenerService.getRecommendationsByArtist(l1));
-            System.out.println(listenerService.getRecommendationsByCategory(l1));
-
-            listenerService.closeSession();
+            songService.addNewSong(words[1],words[2],Arrays.copyOfRange(words,3,words.length));
+            songService.closeSession();
         }
         else if(words[0].equalsIgnoreCase(ADD_ARTIST_CMD))
         {
@@ -60,32 +41,17 @@ public class CmdExecutor {
         }
         else if(words[0].equalsIgnoreCase(ADD_LISTENER_CMD))
         {
-
+            listenerService.addNewListener(words[1]);
+            listenerService.closeSession();
         }
         else if(words[0].equalsIgnoreCase(GET_RECOMMENDATION_BY_CATEGORY_CMD))
         {
-            //@TODO just for fast tests - can be deleted
-
-            //delete start
-            List<Song> liked=new ArrayList<>();
-            Song s=new Song("Hello");
-            s.setCategory(Category.Blues);
-            liked.add(s);
-            Listener l1=new Listener("Konrad",liked,liked);
-            listenerService.getRecommendationsByCategory(l1).forEach(System.out::println);
-            listenerService.closeSession();//!!! this line is necessary in every command
-            //delete end
+            listenerService.getRecommendationsByCategory(new Listener("Kondzio")).forEach(System.out::println);
+            listenerService.closeSession();
         }
         else if(words[0].equalsIgnoreCase(GET_RECOMMENDATION_BY_ARTIST_CMD))
         {
-            List<Song> liked = new ArrayList<>();
-            Song s = new Song("Hi");
-            List<Artist> artists = new ArrayList<>();
-            artists.add(new Artist("Krawczyk"));
-            s.addArtists(artists);
-            liked.add(s);
-            Listener l1 = new Listener("Lukasz",liked,liked);
-            System.out.println(listenerService.getRecommendationsByArtist(l1));
+            listenerService.getRecommendationsByArtist(new Listener("Lukasz")).forEach(System.out::println);
             listenerService.closeSession();
         }
         else if(words[0].equalsIgnoreCase(GET_RECOMMENDATION_BY_LISTENER_CMD)){
@@ -95,6 +61,11 @@ public class CmdExecutor {
             Listener l1 = new Listener("Jan");
             listenerService.getRecommendationsBySimilarListeners(l1).forEach(System.out::println);
             listenerService.closeSession();
+        }
+        else if(words[0].equalsIgnoreCase(CLEAR)){
+            Session session = Neo4jSessionFactory.getInstance().openNeo4jSession();
+            session.query("MATCH (n) DETACH DELETE n",Collections.emptyMap());
+            Neo4jSessionFactory.getInstance().closeSession();
         }
         else throw new IllegalArgumentException("No such command");
 

@@ -14,18 +14,30 @@ public class ListenerService extends GenericService<Listener>{
         return Listener.class;
     }
 
-//    public Listener addNewListener()
+    public void addNewListener(String name){
+        Listener listener = new Listener(name);
+        createOrUpdate(listener);
+        closeSession();
+    }
 
     // now it returns list of missed songs from liked categories
     public Collection<Song> getRecommendationsByCategory(final Listener listener)
     {
-        final Set<Category> likedCategories = listener.getLikedCategory();
+        final Set<Category> likedCategories = listener.getLikedCategories();
         final Collection<Song> songs = new ArrayList<>();
+        final Collection<String> viewedSongs = new ArrayList<>();
+
+        for(Song song: listener.getViewedSongs()){
+            viewedSongs.add(song.getName());
+        }
 
         for(Category category: likedCategories){
             Map<String,Object> params = new HashMap<>();
             params.put("category",category);
-            String query = "MATCH (n:Song{category:$category}) RETURN n";
+            params.put("viewed_songs",viewedSongs);
+            String query = "MATCH (s:Song{category:$category}) " +
+                    "WHERE NONE(song_name IN $viewed_songs WHERE s.name=song_name) " +
+                    "RETURN s";
             songs.addAll(resultToSongCollection(executor.query(query,params)));
         }
 
@@ -51,19 +63,24 @@ public class ListenerService extends GenericService<Listener>{
     // now it returns list of missed songs from liked artists
     public Collection<Song> getRecommendationsByArtist(Listener listener)
     {
-        final Set<Artist> likedArtists = listener.getLikedArtist();
+        final Set<Artist> likedArtists = listener.getLikedArtists();
         final Collection<Song> songs = new ArrayList<>();
+        final Collection<String> viewedSongs = new ArrayList<>();
+
+        for(Song song: listener.getViewedSongs()){
+            viewedSongs.add(song.getName());
+        }
 
         for(Artist artist: likedArtists){
             Map<String,Object> params=new HashMap<>();
             params.put("liked_artist",artist.getName());
-            String query="MATCH (n:Song)" +
-                    "WHERE ANY(a IN n.artists WHERE a = $liked_artist)" +
-                    "RETURN n";
+            params.put("viewed_songs",viewedSongs);
+            String query="MATCH (s:Song)-[:PERFORMED_BY]-(a:Artist) " +
+                    "WHERE a.name=$liked_artist " +
+                    "AND NONE(song_name IN $viewed_songs WHERE s.name=song_name) " +
+                    "RETURN s";
             songs.addAll(resultToSongCollection(executor.query(query,params)));
         }
-
-        songs.removeAll(listener.getViewedSongs()); // maybe it can be replaced by better query
 
         return songs;
     }

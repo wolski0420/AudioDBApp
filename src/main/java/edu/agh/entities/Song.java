@@ -37,6 +37,11 @@ public class Song extends Entity {
         this(name,artists);
         this.category=category;
     }
+
+    public String getName() {
+        return name;
+    }
+
     public void addArtists(final List<Artist> artists)
     {
         this.artists.addAll(artists);
