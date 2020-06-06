@@ -46,14 +46,12 @@ public class ListenerService extends GenericService<Listener>{
         return songs;
     }
 
-
-//        @TODO TEST IT SOMEHOW, but the query should be ok
     public Collection<Song> getRecommendationsBySimilarListeners(Listener listener)
     {
         final Map<String,Object> params = new HashMap<>();
         params.put("listener_name",listener.getName());
 
-        final String query="MATCH (:Listener {name:$listener_name})->(song:Song)<-(anonther_list:Listener)" +
+        final String query="MATCH (:Listener {name:$listener_name})->(song:Song)<-(anonther_list:Listener) " +
                 "MATCH (anonther_list)->(anonther_list_song:Song) " +
                 "WHERE (anonther_list_song<>song) RETURN anonther_list_song";
 
