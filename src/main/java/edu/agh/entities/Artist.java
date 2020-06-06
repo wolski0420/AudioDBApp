@@ -6,6 +6,7 @@ import org.neo4j.ogm.annotation.Relationship;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 @NodeEntity
 public class Artist extends Entity {
@@ -30,5 +31,19 @@ public class Artist extends Entity {
     public void addSong(Collection<Song> songs)
     {
         this.songs.addAll(songs);
+    }
+
+    // not sure what is better: id/name
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Artist)) return false;
+        Artist artist = (Artist) o;
+        return this.name.equals(artist.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 }

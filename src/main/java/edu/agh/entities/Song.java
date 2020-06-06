@@ -30,7 +30,7 @@ public class Song extends Entity {
     public Song(String name,Collection<Artist> artists)
     {
         this(name);
-        this.artists=artists;
+        this.artists.addAll(artists);
     }
     public Song(String name,Category category,Collection<Artist> artists)
     {

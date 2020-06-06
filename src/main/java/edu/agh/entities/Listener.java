@@ -4,9 +4,7 @@ import lombok.Getter;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Random;
+import java.util.*;
 
 @NodeEntity
 public class Listener extends Entity {
@@ -37,36 +35,32 @@ public class Listener extends Entity {
         this.likedSongs.addAll(viewedSongs);
     }
 
-    public Category getLikedOrSuggestedCategory()
+    public Set<Category> getLikedCategory()
     {
-        final int index=getRandomNumber(likedSongs.size());
-        int i=0;
+        EnumSet<Category> categories = EnumSet.noneOf(Category.class);
+
         for(Song s:likedSongs)
         {
-            if(i==index)
-            {
-                System.out.println(s.category);
-                return s.getCategory();
-            }
-            i++;
-
+            categories = EnumSet.of(s.getCategory());
         }
-        return Category.Pop;
+
+        return categories;
     }
 
-    public Artist getLikedArtist()
+    public Set<Artist> getLikedArtist()
     {
-        final int index=getRandomNumber(likedSongs.size());
-        int i=0;
+        Set<Artist> artists = new HashSet<>();
+
         for(Song s:likedSongs)
         {
-            if(i==index)
-            {
-                return s.getRandomArtist();
-            }
-            i++;
+            artists.addAll(s.artists);
         }
-        return null;
+
+        return artists;
+    }
+
+    public Collection<Song> getViewedSongs() {
+        return viewedSongs;
     }
 
     private int getRandomNumber(int upperBoundExclusive)
