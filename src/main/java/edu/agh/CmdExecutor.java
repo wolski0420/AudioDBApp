@@ -21,6 +21,7 @@ public class CmdExecutor {
     private static final String GET_RECOMMENDATION_BY_ARTIST_CMD="get_recommendation_by_artist";
     private static final String GET_RECOMMENDATION_BY_LISTENER_CMD="get_recommendation_by_listener";
     private static final String TEST="test";
+    private static final String QUIT="quit";
     private final SongService songService=new SongService();
     private final ListenerService listenerService=new ListenerService();
     private final ArtistService artistService = new ArtistService();
@@ -84,17 +85,22 @@ public class CmdExecutor {
             listenerService.createOrUpdate(l1);
             listenerService.createOrUpdate(l2);
             Collection<Song> songs=listenerService.getRecommendationsByCategory(l1);
-            Neo4jSessionFactory.getInstance().closeSession();
+            listenerService.closeSession();
             songs.forEach(song-> System.out.println(song));
 
 
 
+        }
+        else if(words[0].equalsIgnoreCase(QUIT))
+        {
+            System.exit(0);
         }
         else throw new IllegalArgumentException("No such command");
 
         //@TODO any other options? discuss needed
     }
 
+    //@TODO enhance it with possible options
     public List<String> getPossibleCommands()
     {
         return new ArrayList<String>(Arrays.asList(ADD_ARTIST_CMD, ADD_SONG_CMD, ADD_LISTENER_CMD, GET_RECOMMENDATION_BY_CATEGORY_CMD));

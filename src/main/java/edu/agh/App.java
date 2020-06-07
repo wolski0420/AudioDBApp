@@ -9,7 +9,11 @@ public class App
     public static void main( String[] args )
     {
         CmdExecutor executor=new CmdExecutor();
+        CmdReceiver receiver=new CmdReceiver(executor.getPossibleCommands());
         executor.execute("clear");
-        executor.execute("test");
+        while(true)
+        {
+            executor.execute(receiver.receiveCommand());
+        }
     }
 }
