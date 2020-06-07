@@ -70,7 +70,7 @@ public class Listener extends Entity {
 
     private int getRandomNumber(int upperBoundExclusive)
     {
-        Random r=new Random();
-        return r.nextInt(upperBoundExclusive);
+        if(upperBoundExclusive < 1) return 0;
+        return new Random().nextInt(upperBoundExclusive);
     }
 }

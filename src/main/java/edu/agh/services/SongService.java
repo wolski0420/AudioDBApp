@@ -18,12 +18,21 @@ public class SongService extends GenericService<Song>  {
         final Collection<Artist> artists = new ArrayList<>();
         final Collection<String> notCreatedArtists = new ArrayList<>();
 
+        // checks song existence (maybe there's other way)
+        final Map<String,Object> songParams = new HashMap<>();
+        songParams.put("title",title);
+        final String songQuery = "MATCH (n:Song{name:$title}) RETURN n";
+        if(executor.query(songQuery,songParams).hasNext()) {
+            System.out.println("This song is already in database!");
+            return null;
+        }
+
         // finding artists in DB
         for(String name : artistsNames){
-            Map<String,Object> params = new HashMap<>();
-            params.put("artist_name",name);
+            Map<String,Object> artistParams = new HashMap<>();
+            artistParams.put("artist_name",name);
             String artistQuery = "MATCH (n:Artist{name:$artist_name}) RETURN n";
-            Collection<Artist> foundArtists = resultToArtistCollection(executor.query(artistQuery,params));
+            Collection<Artist> foundArtists = resultToArtistCollection(executor.query(artistQuery,artistParams));
 
             if(!foundArtists.isEmpty()){
                 artists.add(foundArtists.iterator().next());
@@ -33,31 +42,21 @@ public class SongService extends GenericService<Song>  {
             }
         }
 
-        Category category = Category.fromString(categoryName);   // null when invalid category given (check impl.)
+        final Category category = Category.fromString(categoryName);   // null when invalid category given (check impl.)
 
         // creating in DB
-        SongService service = new SongService();
-        Song song;
+        final Song song;
         if(category == null) song = new Song(title,artists);
         else song = new Song(title,category,artists);
-        service.createOrUpdate(song);
-        service.closeSession();
+        createOrUpdate(song);
 
         // creating not existing artists
-        if(!notCreatedArtists.isEmpty()){
-            for(String name: notCreatedArtists){
-                ArtistService artistService = new ArtistService();
-                Artist artist = artistService.addNewArtist(name,new String[]{title});
-                song.addArtists(Collections.singletonList(artist));
-                artistService.closeSession();
-            }
-
-            SongService service2 = new SongService();
-            service2.createOrUpdate(song);
-            service2.closeSession();
+        for(String name: notCreatedArtists){
+            ArtistService artistService = new ArtistService();
+            artistService.addNewArtist(name,new String[]{title});
+            artistService.closeSession();
         }
 
-        closeSession();
         return song;
     }
 

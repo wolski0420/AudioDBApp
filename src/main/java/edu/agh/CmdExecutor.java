@@ -20,6 +20,8 @@ public class CmdExecutor {
     private static final String GET_RECOMMENDATION_BY_CATEGORY_CMD="get_recommendation_by_category";
     private static final String GET_RECOMMENDATION_BY_ARTIST_CMD="get_recommendation_by_artist";
     private static final String GET_RECOMMENDATION_BY_LISTENER_CMD="get_recommendation_by_listener";
+    private static final String LISTENER_LIKE_SONG="listener_like_song";
+    private static final String LISTENER_VIEWED_SONG="listener_viewed_song";
     private static final String TEST="test";
     private static final String QUIT="quit";
     private final SongService songService=new SongService();
@@ -33,35 +35,82 @@ public class CmdExecutor {
 
         if(words[0].equalsIgnoreCase(ADD_SONG_CMD))
         {
+            if(words.length < 3) {
+                System.out.println("Bad format! Type: " + ADD_SONG_CMD + " [title] [category] [artists_names...]");
+                return;
+            }
+
             songService.addNewSong(words[1],words[2],Arrays.copyOfRange(words,3,words.length));
             songService.closeSession();
         }
         else if(words[0].equalsIgnoreCase(ADD_ARTIST_CMD))
         {
+            if(words.length < 2) {
+                System.out.println("Bad format! Type: " + ADD_ARTIST_CMD + " [name] [songs_titles...]");
+                return;
+            }
+
             artistService.addNewArtist(words[1],Arrays.copyOfRange(words,2,words.length));
             artistService.closeSession();
         }
         else if(words[0].equalsIgnoreCase(ADD_LISTENER_CMD))
         {
+            if(words.length < 2) {
+                System.out.println("Bad format! Type: " + ADD_LISTENER_CMD + " [name]");
+                return;
+            }
+
             listenerService.addNewListener(words[1]);
             listenerService.closeSession();
         }
         else if(words[0].equalsIgnoreCase(GET_RECOMMENDATION_BY_CATEGORY_CMD))
         {
-            listenerService.getRecommendationsByCategory(new Listener("Kondzio")).forEach(System.out::println);
+            if(words.length < 2){
+                System.out.println("Bad format! Type: " + GET_RECOMMENDATION_BY_CATEGORY_CMD + " [listener_name]");
+                return;
+            }
+
+            listenerService.getRecommendationsByCategory(words[1]).forEach(System.out::println);
             listenerService.closeSession();
         }
         else if(words[0].equalsIgnoreCase(GET_RECOMMENDATION_BY_ARTIST_CMD))
         {
-            listenerService.getRecommendationsByArtist(new Listener("Lukasz")).forEach(System.out::println);
+            if(words.length < 2){
+                System.out.println("Bad format! Type: " + GET_RECOMMENDATION_BY_ARTIST_CMD + " [listener_name]");
+                return;
+            }
+
+            listenerService.getRecommendationsByArtist(words[1]).forEach(System.out::println);
             listenerService.closeSession();
         }
-        else if(words[0].equalsIgnoreCase(GET_RECOMMENDATION_BY_LISTENER_CMD)){
+        else if(words[0].equalsIgnoreCase(GET_RECOMMENDATION_BY_LISTENER_CMD))
+        {
+            if(words.length < 2){
+                System.out.println("Bad format! Type: " + GET_RECOMMENDATION_BY_LISTENER_CMD + " [listener_name]");
+                return;
+            }
 
-            //@TODO for fast test
+            listenerService.getRecommendationsBySimilarListeners(words[1]).forEach(System.out::println);
+            listenerService.closeSession();
+        }
+        else if(words[0].equalsIgnoreCase(LISTENER_LIKE_SONG))
+        {
+            if(words.length < 3){
+                System.out.println("Bad format! Type: " + LISTENER_LIKE_SONG + " [listener_name] [song_name]");
+                return;
+            }
 
-            Listener l1 = new Listener("Jan");
-            listenerService.getRecommendationsBySimilarListeners(l1).forEach(System.out::println);
+            listenerService.likeSong(words[1],words[2]);
+            listenerService.closeSession();
+        }
+        else if(words[0].equalsIgnoreCase(LISTENER_VIEWED_SONG))
+        {
+            if(words.length < 3){
+                System.out.println("Bad format! Type: " + LISTENER_VIEWED_SONG + " [listener_name] [song_name]");
+                return;
+            }
+
+            listenerService.viewedSong(words[1],words[2]);
             listenerService.closeSession();
         }
         else if(words[0].equalsIgnoreCase(CLEAR)){
@@ -84,12 +133,9 @@ public class CmdExecutor {
             songService.createOrUpdate(s2);
             listenerService.createOrUpdate(l1);
             listenerService.createOrUpdate(l2);
-            Collection<Song> songs=listenerService.getRecommendationsByCategory(l1);
+            Collection<Song> songs=listenerService.getRecommendationsByArtist(l2.getName());
             listenerService.closeSession();
             songs.forEach(song-> System.out.println(song));
-
-
-
         }
         else if(words[0].equalsIgnoreCase(QUIT))
         {
@@ -103,7 +149,14 @@ public class CmdExecutor {
     //@TODO enhance it with possible options
     public List<String> getPossibleCommands()
     {
-        return new ArrayList<String>(Arrays.asList(ADD_ARTIST_CMD, ADD_SONG_CMD, ADD_LISTENER_CMD, GET_RECOMMENDATION_BY_CATEGORY_CMD));
+        return new ArrayList<String>(Arrays.asList(ADD_ARTIST_CMD + " [name] [songs_titles...]",
+                ADD_SONG_CMD + " [title] [category] [artists_names...]",
+                ADD_LISTENER_CMD + " [name]",
+                GET_RECOMMENDATION_BY_CATEGORY_CMD + " [listener_name]",
+                GET_RECOMMENDATION_BY_ARTIST_CMD + " [listener_name]",
+                GET_RECOMMENDATION_BY_LISTENER_CMD + " [listener_name]",
+                LISTENER_LIKE_SONG + " [listener_name] [song_name]",
+                LISTENER_VIEWED_SONG + " [listener_name] [song_name]"));
     }
 
     //@TODO method to inject the data from JSON to database

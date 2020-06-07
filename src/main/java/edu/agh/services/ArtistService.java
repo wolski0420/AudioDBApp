@@ -17,6 +17,15 @@ public class ArtistService extends GenericService<Artist>{
         final Collection<Song> songs = new ArrayList<>();
         final Collection<String> notCreatedSongs = new ArrayList<>();
 
+        // checks artist existence (maybe there's other way)
+        final Map<String,Object> artistParams = new HashMap<>();
+        artistParams.put("artist_name",artistName);
+        final String artistQuery = "MATCH (n:Artist{name:$artist_name}) RETURN n";
+        if(executor.query(artistQuery,artistParams).hasNext()){
+            System.out.println("This artist is already in database!");
+            return null;
+        }
+
         // finding songs in DB
         for(String name: songsNames){
             Map<String,Object> params = new HashMap<>();
@@ -33,27 +42,16 @@ public class ArtistService extends GenericService<Artist>{
         }
 
         // creating in DB
-
-        ArtistService service = new ArtistService();
-        Artist artist = new Artist(artistName,songs);
-        service.createOrUpdate(artist);
-        service.closeSession();
+        final Artist artist = new Artist(artistName,songs);
+        createOrUpdate(artist);
 
         // creating not existing songs
-        if(!notCreatedSongs.isEmpty()){
-            for(String name: notCreatedSongs){
-                SongService songService = new SongService();
-                Song song = songService.addNewSong(name,null,new String[]{artistName});
-                artist.addSong(Collections.singletonList(song));
-                songService.closeSession();
-            }
-
-            ArtistService service2 = new ArtistService();
-            service2.createOrUpdate(artist);
-            service2.closeSession();
+        for(String name: notCreatedSongs){
+            SongService songService = new SongService();
+            songService.addNewSong(name,null,new String[]{artistName});
+            songService.closeSession();
         }
 
-        closeSession();
         return artist;
     }
 
