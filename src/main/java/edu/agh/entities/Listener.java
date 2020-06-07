@@ -19,6 +19,9 @@ public class Listener extends Entity {
         this.name = name;
     }
 
+    public Listener() {
+    }
+
     public Listener(String name, Collection<Song> viewedSongs, Collection<Song> likedSongs) {
         this.name = name;
         this.viewedSongs = viewedSongs;
@@ -35,28 +38,30 @@ public class Listener extends Entity {
         this.viewedSongs.addAll(viewedSongs);
     }
 
-    public Set<Category> getLikedCategories()
+    public Category getRandomLikedCategory()
     {
-        EnumSet<Category> categories = EnumSet.noneOf(Category.class);
-
+        final int idx=getRandomNumber(likedSongs.size());
+        int i=0;
         for(Song s:likedSongs)
         {
-            categories = EnumSet.of(s.getCategory());
+            if(i==idx)
+                return s.category;
+            i++;
         }
-
-        return categories;
+        return null;
     }
 
-    public Set<Artist> getLikedArtists()
+    public Artist getRandomLikedArtist()
     {
-        Set<Artist> artists = new HashSet<>();
-
+        final int idx=getRandomNumber(likedSongs.size());
+        int i=0;
         for(Song s:likedSongs)
         {
-            artists.addAll(s.artists);
+            if(i==idx)
+                return s.getRandomArtist();
+            i++;
         }
-
-        return artists;
+        return null;
     }
 
     public Collection<Song> getViewedSongs() {

@@ -20,6 +20,7 @@ public class CmdExecutor {
     private static final String GET_RECOMMENDATION_BY_CATEGORY_CMD="get_recommendation_by_category";
     private static final String GET_RECOMMENDATION_BY_ARTIST_CMD="get_recommendation_by_artist";
     private static final String GET_RECOMMENDATION_BY_LISTENER_CMD="get_recommendation_by_listener";
+    private static final String TEST="test";
     private final SongService songService=new SongService();
     private final ListenerService listenerService=new ListenerService();
     private final ArtistService artistService = new ArtistService();
@@ -66,6 +67,28 @@ public class CmdExecutor {
             Session session = Neo4jSessionFactory.getInstance().openNeo4jSession();
             session.query("MATCH (n) DETACH DELETE n",Collections.emptyMap());
             Neo4jSessionFactory.getInstance().closeSession();
+        }
+        else if(words[0].equalsIgnoreCase(TEST))
+        {
+            Artist a1=new Artist("Adele");
+            Artist a2=new Artist("Madele");
+            Song s1=new Song("Hello",Category.Blues,Arrays.asList(a1,a2));
+            a1.addSong(Collections.singletonList(s1));
+            a2.addSong(Collections.singletonList(s1));
+            Song s2=new Song("Goodbye",Category.Blues,Collections.singletonList(a1));
+            a1.addSong(Collections.singletonList(s2));
+            Listener l1=new Listener("Konrad",Arrays.asList(s1,s2),Collections.singletonList(s1));
+            Listener l2=new Listener("Jan",Collections.singletonList(s1),new ArrayList<>());
+            songService.createOrUpdate(s1);
+            songService.createOrUpdate(s2);
+            listenerService.createOrUpdate(l1);
+            listenerService.createOrUpdate(l2);
+            Collection<Song> songs=listenerService.getRecommendationsByCategory(l1);
+            Neo4jSessionFactory.getInstance().closeSession();
+            songs.forEach(song-> System.out.println(song));
+
+
+
         }
         else throw new IllegalArgumentException("No such command");
 
