@@ -10,7 +10,7 @@ public class App
     {
         CmdExecutor executor=new CmdExecutor();
         CmdReceiver receiver=new CmdReceiver(executor.getPossibleCommands());
-        //executor.execute("clear");
+        executor.execute("clear");
         while(true)
         {
             try

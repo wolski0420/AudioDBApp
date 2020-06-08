@@ -20,7 +20,6 @@ public class Song extends Entity {
     @Relationship(type="PERFORMED_BY")
     Collection<Artist> artists=new ArrayList<>();
 
-
     public Song() {
     }
 

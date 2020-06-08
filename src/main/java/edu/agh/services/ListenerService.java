@@ -17,36 +17,45 @@ public class ListenerService extends GenericService<Listener> {
         return Listener.class;
     }
 
-    public void addNewListener(String name) {
-        Listener listener = new Listener(name);
-        createOrUpdate(listener);
+    public void addNewListener(final String name) {
+        if(findListenerByName(name) != null){
+            System.out.println("This listener is already in database!");
+            return;
+        }
+
+        createOrUpdate(new Listener(name));
+        System.out.println("Added new listener named " + name);
     }
 
-    public Collection<Song> getRecommendationsByCategory(final String listener_name) {
-
-        final Listener listener = findListenerByName(listener_name);
+    public Collection<Song> getRecommendationsByCategory(final String name) {
+        final Listener listener = findListenerByName(name);
         if(listener == null){
             System.out.println("Listener doesn't exist in database!");
             return Collections.emptyList();
         }
+
         Category category=listener.getRandomLikedCategory();
-        if(category==null) {
+        if(category==null){
             category = listener.getRandomViewedCategory();
         }
-        System.out.println("Getting recommendation for "+Category.toString(category));
-        return getSongsForListenerFromCategory(category,listener_name);
+        if(category==null){
+            System.out.println("Database don't know what category listener likes!");
+            return Collections.emptyList();
+        }
+
+        System.out.println("Getting recommendation for " + name + " from " + Category.toString(category));
+        return getSongsForListenerFromCategory(category,name);
     }
 
-    private Collection<Song> getSongsForListenerFromCategory(Category category,String listenerName)
-    {
+    private Collection<Song> getSongsForListenerFromCategory(Category category,String listenerName) {
         final Map<String, Object> params = new HashMap<>();
         params.put("category", Category.toString(category));
         params.put("listener_name", listenerName);
         params.put("num_of_songs", SONGS_TO_FETCH);
-        final String query="MATCH (all_from_cat:Song{category: $category}) WHERE NOT (:Listener{name: $listener_name})--(all_from_cat) RETURN DISTINCT id(all_from_cat) LIMIT $num_of_songs";
-        Collection<Long> songsIds=getIdsFromMap(executor.query(query,params));
-        return songService.getEntitiesById(songsIds);
+        final String query = "MATCH (all_from_cat:Song{category: $category}) WHERE NOT (:Listener{name: $listener_name})--(all_from_cat) RETURN DISTINCT id(all_from_cat) LIMIT $num_of_songs";
+        Collection<Long> songsIds = getIdsFromMap(executor.query(query, params));
 
+        return songService.getEntitiesById(songsIds);
     }
 
 
@@ -56,6 +65,7 @@ public class ListenerService extends GenericService<Listener> {
             System.out.println("Listener doesn't exist in database!");
             return Collections.emptyList();
         }
+
         System.out.println(String.format("Getting recommendation for %s by similar listeners.",listenerName));
         return getSongsForListenerFromSimilarListeners(listenerName);
     }
@@ -69,6 +79,7 @@ public class ListenerService extends GenericService<Listener> {
                 "WHERE (list<>anonther_list) AND (anonther_list<>list) MATCH (anonther_list)-->(anonther_list_song:Song) " +
                 "WHERE (anonther_list_song<>song) RETURN DISTINCT id(anonther_list_song) LIMIT $num_of_songs";
         Collection<Long> songsIds=getIdsFromMap(executor.query(query,params));
+
         return songService.getEntitiesById(songsIds);
     }
 
@@ -80,9 +91,15 @@ public class ListenerService extends GenericService<Listener> {
         }
 
         Artist likedArtist = listener.getRandomLikedArtist();
-        if(likedArtist==null) {
+        if(likedArtist==null){
             likedArtist=listener.getRandomViewedArtist();
         }
+        if(likedArtist==null){
+            System.out.println("Database don't know what artist listener likes!");
+            return Collections.emptyList();
+        }
+
+        System.out.println("Getting recommendation for " + name + " by artist named " + likedArtist.getName());
         return getSongsForListenerFromArtist(name,likedArtist);
     }
 
@@ -96,8 +113,8 @@ public class ListenerService extends GenericService<Listener> {
                 "MATCH (listener:Listener{name: $listener_name}) WHERE NOT (song)--(listener)" +
                 "RETURN DISTINCT id(song) LIMIT $num_to_fetch";
         Collection<Long> songsIds=getIdsFromMap(executor.query(query,params));
-        return songService.getEntitiesById(songsIds);
 
+        return songService.getEntitiesById(songsIds);
     }
 
     public void likeSong(final String listenerName, final String title){
@@ -115,6 +132,7 @@ public class ListenerService extends GenericService<Listener> {
 
         listener.addLikedSongs(Collections.singletonList(song));
         createOrUpdate(listener);
+        System.out.println("Listener " + listenerName + " liked " +  title);
     }
 
     public void viewedSong(final String listenerName, final String title){
@@ -132,17 +150,7 @@ public class ListenerService extends GenericService<Listener> {
 
         listener.addViewedSongs(Collections.singletonList(song));
         createOrUpdate(listener);
-    }
-
-    private Collection<Song> resultToSongCollection(Iterator<Map<String, Object>> iterator) {
-        final Collection<Song> songs = new ArrayList<>();
-
-        while (iterator.hasNext()) {
-            Map<String, Object> entry = iterator.next();
-            entry.forEach((string, object) -> songs.add((Song) object));
-        }
-
-        return songs;
+        System.out.println("Listener " + listenerName + " viewed " +  title);
     }
 
     private Listener findListenerByName(final String name){
@@ -150,11 +158,11 @@ public class ListenerService extends GenericService<Listener> {
         listenerParams.put("listener_name",name);
         final String listenerQuery = "MATCH (n:Listener{name:$listener_name}) RETURN id(n) LIMIT 1";
         Iterator<Map<String,Object>> itr=executor.query(listenerQuery,listenerParams);
+
+        if(!itr.hasNext()) return null;
+
         final Long id=(Long)itr.next().get("id(n)");
 
         return find(id);
     }
-
-
-
 }

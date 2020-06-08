@@ -38,7 +38,7 @@ public class CmdExecutor {
                 return;
             }
 
-            artistService.addNewArtist(words[1],Arrays.copyOfRange(words,2,words.length));
+            artistService.addNewArtist(words[1]);
             artistService.closeSession();
         }
         else if(words[0].equalsIgnoreCase(ADD_LISTENER_CMD))
@@ -108,6 +108,7 @@ public class CmdExecutor {
         }
         else if(words[0].equalsIgnoreCase(TEST_CMD))
         {
+            execute("clear");
             Artist a1=new Artist("Adele");
             Artist a2=new Artist("Madele");
             Song s1=new Song("Hello",Category.Blues,Arrays.asList(a1,a2));
@@ -119,22 +120,25 @@ public class CmdExecutor {
             Listener l2=new Listener("Jan",Collections.singletonList(s1),new ArrayList<>());
             songService.createOrUpdate(s1);
             songService.createOrUpdate(s2);
+            songService.closeSession();
             listenerService.createOrUpdate(l1);
             listenerService.createOrUpdate(l2);
-            Collection<Song> songs=listenerService.getRecommendationsByArtist(l2.getName());
+
+            listenerService.getRecommendationsByCategory(l1.getName()).forEach(System.out::println);
+            listenerService.getRecommendationsByArtist(l1.getName()).forEach(System.out::println);
+            listenerService.getRecommendationsBySimilarListeners(l1.getName()).forEach(System.out::println);
+            listenerService.getRecommendationsByCategory(l2.getName()).forEach(System.out::println);
+            listenerService.getRecommendationsByArtist(l2.getName()).forEach(System.out::println);
+            listenerService.getRecommendationsBySimilarListeners(l2.getName()).forEach(System.out::println);
             listenerService.closeSession();
-            songs.forEach(song-> System.out.println(song));
         }
         else if(words[0].equalsIgnoreCase(QUIT_CMD))
         {
             System.exit(0);
         }
         else throw new IllegalArgumentException("No such command");
-
-        //@TODO any other options? discuss needed
     }
 
-    //@TODO enhance it with possible options
     public List<String> getPossibleCommands()
     {
         return new ArrayList<String>(Arrays.asList(ADD_ARTIST_CMD_WITH_OPTIONS,
