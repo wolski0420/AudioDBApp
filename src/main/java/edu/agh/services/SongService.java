@@ -13,6 +13,8 @@ public class SongService extends GenericService<Song>  {
         return Song.class;
     }
 
+
+    //@TODO correction needed- look getSongsForListenerFromArtist in ListenerService
     // it should work with no artists names given also (empty collection will be given to song constructor)
     public Song addNewSong(final String title, final String categoryName, final String[] artistsNames){
         final Collection<Artist> artists = new ArrayList<>();

@@ -12,7 +12,7 @@ import java.util.Objects;
 public class Artist extends Entity {
     @Getter
     String name;
-    @Relationship(type="PERFORMED_BY",direction = Relationship.INCOMING)
+    @Relationship(type="PERFORMED_BY",direction = Relationship.INCOMING) @Getter
     Collection<Song> songs=new ArrayList<>();
 
     public Artist() {
@@ -45,5 +45,10 @@ public class Artist extends Entity {
     @Override
     public int hashCode() {
         return Objects.hash(name);
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
     }
 }

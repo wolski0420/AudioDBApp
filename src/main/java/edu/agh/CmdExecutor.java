@@ -8,22 +8,10 @@ import edu.agh.services.ArtistService;
 import edu.agh.services.ListenerService;
 import edu.agh.services.SongService;
 import org.neo4j.ogm.session.Session;
-import org.neo4j.ogm.session.SessionFactory;
-
 import java.util.*;
+import static edu.agh.Commands.*;
 
 public class CmdExecutor {
-    private static final String CLEAR="clear";
-    private static final String ADD_SONG_CMD="add_song";
-    private static final String ADD_ARTIST_CMD="add_artist";
-    private static final String ADD_LISTENER_CMD="add_listener";
-    private static final String GET_RECOMMENDATION_BY_CATEGORY_CMD="get_recommendation_by_category";
-    private static final String GET_RECOMMENDATION_BY_ARTIST_CMD="get_recommendation_by_artist";
-    private static final String GET_RECOMMENDATION_BY_LISTENER_CMD="get_recommendation_by_listener";
-    private static final String LISTENER_LIKE_SONG="listener_like_song";
-    private static final String LISTENER_VIEWED_SONG="listener_viewed_song";
-    private static final String TEST="test";
-    private static final String QUIT="quit";
     private final SongService songService=new SongService();
     private final ListenerService listenerService=new ListenerService();
     private final ArtistService artistService = new ArtistService();
@@ -36,7 +24,7 @@ public class CmdExecutor {
         if(words[0].equalsIgnoreCase(ADD_SONG_CMD))
         {
             if(words.length < 3) {
-                System.out.println("Bad format! Type: " + ADD_SONG_CMD + " [title] [category] [artists_names...]");
+                System.out.println("Bad format! Type: " + ADD_SONG_CMD_WITH_OPTIONS);
                 return;
             }
 
@@ -46,7 +34,7 @@ public class CmdExecutor {
         else if(words[0].equalsIgnoreCase(ADD_ARTIST_CMD))
         {
             if(words.length < 2) {
-                System.out.println("Bad format! Type: " + ADD_ARTIST_CMD + " [name] [songs_titles...]");
+                System.out.println("Bad format! Type: " + ADD_ARTIST_CMD_WITH_OPTIONS);
                 return;
             }
 
@@ -56,7 +44,7 @@ public class CmdExecutor {
         else if(words[0].equalsIgnoreCase(ADD_LISTENER_CMD))
         {
             if(words.length < 2) {
-                System.out.println("Bad format! Type: " + ADD_LISTENER_CMD + " [name]");
+                System.out.println("Bad format! Type: " + ADD_LISTENER_CMD_WITH_OPTIONS );
                 return;
             }
 
@@ -66,7 +54,7 @@ public class CmdExecutor {
         else if(words[0].equalsIgnoreCase(GET_RECOMMENDATION_BY_CATEGORY_CMD))
         {
             if(words.length < 2){
-                System.out.println("Bad format! Type: " + GET_RECOMMENDATION_BY_CATEGORY_CMD + " [listener_name]");
+                System.out.println("Bad format! Type: " + GET_RECOMMENDATION_BY_CATEGORY_CMD_WITH_OPTIONS);
                 return;
             }
 
@@ -76,37 +64,37 @@ public class CmdExecutor {
         else if(words[0].equalsIgnoreCase(GET_RECOMMENDATION_BY_ARTIST_CMD))
         {
             if(words.length < 2){
-                System.out.println("Bad format! Type: " + GET_RECOMMENDATION_BY_ARTIST_CMD + " [listener_name]");
+                System.out.println("Bad format! Type: " + GET_RECOMMENDATION_BY_ARTIST_CMD_WITH_OPTIONS);
                 return;
             }
 
             listenerService.getRecommendationsByArtist(words[1]).forEach(System.out::println);
             listenerService.closeSession();
         }
-        else if(words[0].equalsIgnoreCase(GET_RECOMMENDATION_BY_LISTENER_CMD))
+        else if(words[0].equalsIgnoreCase(GET_RECOMMENDATION_BY_SIMILAR_LISTENERS_CMD))
         {
             if(words.length < 2){
-                System.out.println("Bad format! Type: " + GET_RECOMMENDATION_BY_LISTENER_CMD + " [listener_name]");
+                System.out.println("Bad format! Type: " + GET_RECOMMENDATION_BY_SIMILAR_LISTENERS_CMD_WITH_OPTIONS);
                 return;
             }
 
             listenerService.getRecommendationsBySimilarListeners(words[1]).forEach(System.out::println);
             listenerService.closeSession();
         }
-        else if(words[0].equalsIgnoreCase(LISTENER_LIKE_SONG))
+        else if(words[0].equalsIgnoreCase(LISTENER_LIKE_SONG_CMD))
         {
             if(words.length < 3){
-                System.out.println("Bad format! Type: " + LISTENER_LIKE_SONG + " [listener_name] [song_name]");
+                System.out.println("Bad format! Type: " + LISTENER_LIKE_SONG_CMD_WITH_OPTIONS);
                 return;
             }
 
             listenerService.likeSong(words[1],words[2]);
             listenerService.closeSession();
         }
-        else if(words[0].equalsIgnoreCase(LISTENER_VIEWED_SONG))
+        else if(words[0].equalsIgnoreCase(LISTENER_VIEWED_SONG_CMD))
         {
             if(words.length < 3){
-                System.out.println("Bad format! Type: " + LISTENER_VIEWED_SONG + " [listener_name] [song_name]");
+                System.out.println("Bad format! Type: " + LISTENER_VIEWED_SONG_CMD_WITH_OPTIONS );
                 return;
             }
 
@@ -118,7 +106,7 @@ public class CmdExecutor {
             session.query("MATCH (n) DETACH DELETE n",Collections.emptyMap());
             Neo4jSessionFactory.getInstance().closeSession();
         }
-        else if(words[0].equalsIgnoreCase(TEST))
+        else if(words[0].equalsIgnoreCase(TEST_CMD))
         {
             Artist a1=new Artist("Adele");
             Artist a2=new Artist("Madele");
@@ -137,7 +125,7 @@ public class CmdExecutor {
             listenerService.closeSession();
             songs.forEach(song-> System.out.println(song));
         }
-        else if(words[0].equalsIgnoreCase(QUIT))
+        else if(words[0].equalsIgnoreCase(QUIT_CMD))
         {
             System.exit(0);
         }
@@ -149,14 +137,14 @@ public class CmdExecutor {
     //@TODO enhance it with possible options
     public List<String> getPossibleCommands()
     {
-        return new ArrayList<String>(Arrays.asList(ADD_ARTIST_CMD + " [name] [songs_titles...]",
-                ADD_SONG_CMD + " [title] [category] [artists_names...]",
-                ADD_LISTENER_CMD + " [name]",
-                GET_RECOMMENDATION_BY_CATEGORY_CMD + " [listener_name]",
-                GET_RECOMMENDATION_BY_ARTIST_CMD + " [listener_name]",
-                GET_RECOMMENDATION_BY_LISTENER_CMD + " [listener_name]",
-                LISTENER_LIKE_SONG + " [listener_name] [song_name]",
-                LISTENER_VIEWED_SONG + " [listener_name] [song_name]"));
+        return new ArrayList<String>(Arrays.asList(ADD_ARTIST_CMD_WITH_OPTIONS,
+                ADD_SONG_CMD_WITH_OPTIONS,
+                ADD_LISTENER_CMD_WITH_OPTIONS,
+                GET_RECOMMENDATION_BY_CATEGORY_CMD_WITH_OPTIONS,
+                GET_RECOMMENDATION_BY_ARTIST_CMD_WITH_OPTIONS,
+                GET_RECOMMENDATION_BY_SIMILAR_LISTENERS_CMD_WITH_OPTIONS,
+                LISTENER_LIKE_SONG_CMD_WITH_OPTIONS,
+                LISTENER_VIEWED_SONG_CMD_WITH_OPTIONS));
     }
 
     //@TODO method to inject the data from JSON to database

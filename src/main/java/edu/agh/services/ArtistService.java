@@ -12,6 +12,7 @@ public class ArtistService extends GenericService<Artist>{
         return Artist.class;
     }
 
+    //@TODO correction needed- look getSongsForListenerFromArtist in ListenerService
     // it should work with no songs given also (empty collection will be given to the constructor)
     public Artist addNewArtist(String artistName, String[] songsNames){
         final Collection<Song> songs = new ArrayList<>();
@@ -20,39 +21,13 @@ public class ArtistService extends GenericService<Artist>{
         // checks artist existence (maybe there's other way)
         final Map<String,Object> artistParams = new HashMap<>();
         artistParams.put("artist_name",artistName);
-        final String artistQuery = "MATCH (n:Artist{name:$artist_name}) RETURN n";
-        if(executor.query(artistQuery,artistParams).hasNext()){
-            System.out.println("This artist is already in database!");
-            return null;
-        }
+        final String artistQuery = "MATCH (n:Artist{name:$artist_name}) RETURN DISTINCT id(n)";
+        Collection<Long> ids=getIdsFromMap(executor.query(artistQuery,artistParams)) ;
+        Collection<Artist> arristsFromDb=this.getEntitiesById(ids);
+        arristsFromDb.forEach(artist->artist.addSong());
 
-        // finding songs in DB
-        for(String name: songsNames){
-            Map<String,Object> params = new HashMap<>();
-            params.put("song_name",name);
-            String songQuery = "MATCH (n:Song{name:$song_name}) RETURN n";
-            Collection<Song> foundSongs = resultToSongCollection(executor.query(songQuery,params));
-
-            if(!foundSongs.isEmpty()){
-                songs.add(foundSongs.iterator().next());
-            }
-            else{
-                notCreatedSongs.add(name);
-            }
-        }
-
-        // creating in DB
-        final Artist artist = new Artist(artistName,songs);
-        createOrUpdate(artist);
-
-        // creating not existing songs
-        for(String name: notCreatedSongs){
-            SongService songService = new SongService();
-            songService.addNewSong(name,null,new String[]{artistName});
-            songService.closeSession();
-        }
-
-        return artist;
+        //@TODO change null
+        return null;
     }
 
     private Collection<Song> resultToSongCollection(Iterator<Map<String,Object>> iterator){
