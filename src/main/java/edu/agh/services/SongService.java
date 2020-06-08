@@ -47,8 +47,19 @@ public class SongService extends GenericService<Song>  {
         artistService.closeSession();
 
         // creating in DB
-        System.out.println("Added new song named " + title);
+        System.out.println(String.format("Added new song titled \"%s\"",title));
         return createOrUpdate(new Song(title,Category.fromString(categoryName),artists));
+    }
+
+    public Collection<Artist> findArtistsByTitle(final String title){
+        final Song song = findSongByName(title);
+        if(song == null){
+            System.out.println("This song doesn't exist in database!");
+            return Collections.emptyList();
+        }
+
+        System.out.println(String.format("Getting artists of song titled \"%s\"",title));
+        return song.getArtists();
     }
 
     public Song findSongByName(final String name){
@@ -56,6 +67,9 @@ public class SongService extends GenericService<Song>  {
         songParams.put("title",name);
         final String songQuery = "MATCH (n:Song{name:$title}) RETURN id(n) LIMIT 1";
         Iterator<Map<String,Object>> itr=executor.query(songQuery,songParams);
+
+        if(!itr.hasNext()) return null;
+
         final Long id=(Long)itr.next().get("id(n)");
 
         return find(id);

@@ -24,7 +24,7 @@ public class ListenerService extends GenericService<Listener> {
         }
 
         createOrUpdate(new Listener(name));
-        System.out.println("Added new listener named " + name);
+        System.out.println(String.format("Added new listener named \"%s\"",name));
     }
 
     public Collection<Song> getRecommendationsByCategory(final String name) {
@@ -43,7 +43,7 @@ public class ListenerService extends GenericService<Listener> {
             return Collections.emptyList();
         }
 
-        System.out.println("Getting recommendation for " + name + " from " + Category.toString(category));
+        System.out.println(String.format("Getting recommendation for \"%s\" from \"%s\"",name,Category.toString(category)));
         return getSongsForListenerFromCategory(category,name);
     }
 
@@ -66,7 +66,7 @@ public class ListenerService extends GenericService<Listener> {
             return Collections.emptyList();
         }
 
-        System.out.println(String.format("Getting recommendation for %s by similar listeners.",listenerName));
+        System.out.println(String.format("Getting recommendation for \"%s\" by similar listeners.",listenerName));
         return getSongsForListenerFromSimilarListeners(listenerName);
     }
 
@@ -99,7 +99,7 @@ public class ListenerService extends GenericService<Listener> {
             return Collections.emptyList();
         }
 
-        System.out.println("Getting recommendation for " + name + " by artist named " + likedArtist.getName());
+        System.out.println(String.format("Getting recommendation for \"%s\" by artist named \"%s\"",name,likedArtist.getName()));
         return getSongsForListenerFromArtist(name,likedArtist);
     }
 
@@ -132,7 +132,7 @@ public class ListenerService extends GenericService<Listener> {
 
         listener.addLikedSongs(Collections.singletonList(song));
         createOrUpdate(listener);
-        System.out.println("Listener " + listenerName + " liked " +  title);
+        System.out.println(String.format("Listener \"%s\" liked \"%s\"",listenerName,title));
     }
 
     public void viewedSong(final String listenerName, final String title){
@@ -150,7 +150,7 @@ public class ListenerService extends GenericService<Listener> {
 
         listener.addViewedSongs(Collections.singletonList(song));
         createOrUpdate(listener);
-        System.out.println("Listener " + listenerName + " viewed " +  title);
+        System.out.println(String.format("Listener \"%s\" viewed \"%s\"",listenerName,title));
     }
 
     private Listener findListenerByName(final String name){

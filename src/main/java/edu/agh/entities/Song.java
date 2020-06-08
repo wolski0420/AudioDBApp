@@ -43,6 +43,10 @@ public class Song extends Entity {
         this.artists.addAll(artists);
     }
 
+    public Collection<Artist> getArtists() {
+        return artists;
+    }
+
     public Artist getRandomArtist()
     {
         final int index=getRandomNumber(artists.size());

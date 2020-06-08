@@ -101,6 +101,24 @@ public class CmdExecutor {
             listenerService.viewedSong(words[1],words[2]);
             listenerService.closeSession();
         }
+        else if(words[0].equalsIgnoreCase(FIND_ARTISTS_BY_SONG_CMD)){
+            if(words.length < 2){
+                System.out.println("Bad format! Type: " + FIND_ARTISTS_BY_SONG_CMD_WITH_OPTIONS);
+                return;
+            }
+
+            songService.findArtistsByTitle(words[1]).forEach(System.out::println);
+            songService.closeSession();
+        }
+        else if(words[0].equalsIgnoreCase(FIND_SONGS_BY_ARTIST_CMD)){
+            if(words.length < 2){
+                System.out.println("Bad format! Tyep: " + FIND_SONGS_BY_ARTIST_CMD_WITH_OPTIONS);
+                return;
+            }
+
+            artistService.findSongsByArtistName(words[1]).forEach(System.out::println);
+            artistService.closeSession();
+        }
         else if(words[0].equalsIgnoreCase(CLEAR)){
             Session session = Neo4jSessionFactory.getInstance().openNeo4jSession();
             session.query("MATCH (n) DETACH DELETE n",Collections.emptyMap());
@@ -108,7 +126,7 @@ public class CmdExecutor {
         }
         else if(words[0].equalsIgnoreCase(TEST_CMD))
         {
-            execute("clear");
+            //execute("clear");
             Artist a1=new Artist("Adele");
             Artist a2=new Artist("Madele");
             Song s1=new Song("Hello",Category.Blues,Arrays.asList(a1,a2));
@@ -116,8 +134,8 @@ public class CmdExecutor {
             a2.addSong(Collections.singletonList(s1));
             Song s2=new Song("Goodbye",Category.Blues,Collections.singletonList(a1));
             a1.addSong(Collections.singletonList(s2));
-            Listener l1=new Listener("Konrad",Arrays.asList(s1,s2),Collections.singletonList(s1));
-            Listener l2=new Listener("Jan",Collections.singletonList(s1),new ArrayList<>());
+            Listener l1=new Listener("Konrad",Collections.singletonList(s1),Arrays.asList(s1,s2));
+            Listener l2=new Listener("Jan",new ArrayList<>(),Collections.singletonList(s1));
             songService.createOrUpdate(s1);
             songService.createOrUpdate(s2);
             songService.closeSession();
@@ -148,7 +166,9 @@ public class CmdExecutor {
                 GET_RECOMMENDATION_BY_ARTIST_CMD_WITH_OPTIONS,
                 GET_RECOMMENDATION_BY_SIMILAR_LISTENERS_CMD_WITH_OPTIONS,
                 LISTENER_LIKE_SONG_CMD_WITH_OPTIONS,
-                LISTENER_VIEWED_SONG_CMD_WITH_OPTIONS));
+                LISTENER_VIEWED_SONG_CMD_WITH_OPTIONS,
+                FIND_ARTISTS_BY_SONG_CMD_WITH_OPTIONS,
+                FIND_SONGS_BY_ARTIST_CMD_WITH_OPTIONS));
     }
 
     //@TODO method to inject the data from JSON to database

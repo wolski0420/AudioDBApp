@@ -12,7 +12,7 @@ public class ArtistService extends GenericService<Artist>{
         return Artist.class;
     }
 
-    public Artist addNewArtist(String artistName){
+    public Artist addNewArtist(final String artistName){
         // checks artist existence
         final Map<String,Object> artistParams = new HashMap<>();
         artistParams.put("artist_name",artistName);
@@ -23,7 +23,31 @@ public class ArtistService extends GenericService<Artist>{
         }
 
         // creating artist and saving in DB
-        System.out.println("Added new artist named " + artistName);
+        System.out.println(String.format("Added new artist named \"%s\"",artistName));
         return createOrUpdate(new Artist(artistName));
+    }
+
+    public Collection<Song> findSongsByArtistName(final String artistName){
+        final Artist artist = findArtistByName(artistName);
+        if(artist == null){
+            System.out.println("This artist doesn't exist in database!");
+            return Collections.emptyList();
+        }
+
+        System.out.println(String.format("Getting songs of artist named \"%s\"",artistName));
+        return artist.getSongs();
+    }
+
+    private Artist findArtistByName(final String name){
+        final HashMap<String,Object> artistParams = new HashMap<>();
+        artistParams.put("artist_name",name);
+        final String artistQuery = "MATCH (n:Artist{name:$artist_name}) RETURN id(n) LIMIT 1";
+        Iterator<Map<String,Object>> itr = executor.query(artistQuery,artistParams);
+
+        if(!itr.hasNext()) return null;
+
+        final Long id = (Long)itr.next().get("id(n)");
+
+        return find(id);
     }
 }
