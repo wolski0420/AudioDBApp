@@ -14,4 +14,12 @@ public enum Category {
         if(categoryName.equalsIgnoreCase("pop")) return Pop;
         return null;
     }
+    public static String toString(Category c)
+    {
+        if(c==Blues) return "Blues";
+        if(c==Rock) return "Rock";
+        if(c==Pop) return "Pop";
+        if(c==Jazz) return "Jazz";
+        return null;
+    }
 }

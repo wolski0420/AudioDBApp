@@ -13,6 +13,7 @@ import java.util.Random;
 
 @NodeEntity @ToString
 public class Song extends Entity {
+    @Getter
     String name;
     @Setter @Getter
     Category category;
@@ -36,10 +37,6 @@ public class Song extends Entity {
     {
         this(name,artists);
         this.category=category;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public void addArtists(final List<Artist> artists)

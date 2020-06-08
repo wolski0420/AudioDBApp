@@ -70,4 +70,17 @@ public class SongService extends GenericService<Song>  {
 
         return artists;
     }
+
+    public Song findSongByName(final String name){
+        final HashMap<String,Object> songParams = new HashMap<>();
+        songParams.put("title",name);
+        final String songQuery = "MATCH (n:Song{name:$title}) RETURN id(n) LIMIT 1";
+        Iterator<Map<String,Object>> itr=executor.query(songQuery,songParams);
+        final Long id=(Long)itr.next().get("id(n)");
+
+        return null;
+    }
+
+
+
 }

@@ -10,10 +10,17 @@ public class App
     {
         CmdExecutor executor=new CmdExecutor();
         CmdReceiver receiver=new CmdReceiver(executor.getPossibleCommands());
-        executor.execute("clear");
+        //executor.execute("clear");
         while(true)
         {
-            executor.execute(receiver.receiveCommand());
+            try
+            {
+                executor.execute(receiver.receiveCommand());
+            }
+            catch (Exception e)
+            {
+                System.out.println(e.getMessage());
+            }
         }
     }
 }

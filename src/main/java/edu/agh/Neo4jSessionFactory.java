@@ -4,6 +4,9 @@ import org.neo4j.ogm.config.Configuration;
 import org.neo4j.ogm.session.Session;
 import org.neo4j.ogm.session.SessionFactory;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class Neo4jSessionFactory {
     private static final Configuration config = new Configuration.Builder()
             .uri("bolt://localhost")
@@ -14,7 +17,7 @@ public class Neo4jSessionFactory {
 
     private Neo4jSessionFactory()
     {
-
+        java.util.logging.Logger.getLogger("org.neo4j.ogm.drivers.bolt.request.BoltRequest").setLevel(Level.WARNING);
     }
     public static Neo4jSessionFactory getInstance()
     {

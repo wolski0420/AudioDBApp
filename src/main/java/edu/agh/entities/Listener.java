@@ -1,12 +1,13 @@
 package edu.agh.entities;
 
 import lombok.Getter;
+import lombok.ToString;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
 import java.util.*;
 
-@NodeEntity
+@NodeEntity @ToString
 public class Listener extends Entity {
     @Getter
     String name;
@@ -51,11 +52,37 @@ public class Listener extends Entity {
         return null;
     }
 
+    public Category getRandomViewedCategory()
+    {
+        final int idx=getRandomNumber(viewedSongs.size());
+        int i=0;
+        for(Song s:viewedSongs)
+        {
+            if(i==idx)
+                return s.category;
+            i++;
+        }
+        return null;
+    }
+
     public Artist getRandomLikedArtist()
     {
         final int idx=getRandomNumber(likedSongs.size());
         int i=0;
         for(Song s:likedSongs)
+        {
+            if(i==idx)
+                return s.getRandomArtist();
+            i++;
+        }
+        return null;
+    }
+
+    public Artist getRandomViewedArtist()
+    {
+        final int idx=getRandomNumber(viewedSongs.size());
+        int i=0;
+        for(Song s:viewedSongs)
         {
             if(i==idx)
                 return s.getRandomArtist();
