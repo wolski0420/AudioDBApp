@@ -1,0 +1,230 @@
+[
+  {
+    "name": "WakeMeUp",
+    "category": "Pop",
+    "artists":[
+      {
+        "name": "Avicii"
+      },
+      {
+        "name": "AloeBlacc"
+      }
+    ]
+  },
+  {
+    "name": "INeedADollar",
+    "category": "Rock",
+    "artists":[
+      {
+        "name": "AloeBlacc"
+      }
+    ]
+  },
+  {
+    "name": "SOS",
+    "category": "Jazz",
+    "artists":[
+      {
+        "name": "Avicii"
+      },
+      {
+        "name": "AloeBlacc"
+      }
+    ]
+  },
+  {
+    "name": "Dangerous",
+    "category": "Blues",
+    "artists":[
+      {
+        "name": "DavidGuetta"
+      },
+      {
+        "name": "SamMartin"
+      }
+    ]
+  },
+  {
+    "name": "LoversOnTheSun",
+    "category": "Pop",
+    "artists":[
+      {
+        "name": "DavidGuetta"
+      },
+      {
+        "name": "SamMartin"
+      }
+    ]
+  },
+  {
+    "name": "Holiday",
+    "category": "Rock",
+    "artists":[
+      {
+        "name": "Avicii"
+      }
+    ]
+  },
+  {
+    "name": "MadLove",
+    "category": "Jazz",
+    "artists":[
+      {
+        "name": "SeanPaul"
+      },
+      {
+        "name": "DavidGuetta"
+      }
+    ]
+  },
+  {
+    "name": "CheapThrills",
+    "category": "Blues",
+    "artists":[
+      {
+        "name": "Sia"
+      },
+      {
+        "name": "SeanPaul"
+      }
+    ]
+  },
+  {
+    "name": "Titanium",
+    "category": "Pop",
+    "artists":[
+      {
+        "name": "DavidGuetta"
+      },
+      {
+        "name": "Sia"
+      }
+    ]
+  },
+  {
+    "name": "SheWolf",
+    "category": "Rock",
+    "artists":[
+      {
+        "name": "DavidGuetta"
+      },
+      {
+        "name": "Sia"
+      }
+    ]
+  },
+  {
+    "name": "Chandelier",
+    "category": "Jazz",
+    "artists":[
+      {
+        "name": "Sia"
+      }
+    ]
+  },
+  {
+    "name": "ElasticHeart",
+    "category": "Blues",
+    "artists":[
+      {
+        "name": "Sia"
+      }
+    ]
+  },
+  {
+    "name": "WhereThemGirlsAt",
+    "category": "Pop",
+    "artists":[
+      {
+        "name": "NickiMinaj"
+      },
+      {
+        "name": "DavidGuetta"
+      },
+      {
+        "name": "FloRida"
+      }
+    ]
+  },
+  {
+    "name": "ClubCantHandleMe",
+    "category": "Rock",
+    "artists":[
+      {
+        "name": "DavidGuetta"
+      },
+      {
+        "name": "FloRida"
+      }
+    ]
+  },
+  {
+    "name": "Anaconda",
+    "category": "Jazz",
+    "artists":[
+      {
+        "name": "NickiMinaj"
+      }
+    ]
+  },
+  {
+    "name": "SideToSide",
+    "category": "Blues",
+    "artists":[
+      {
+        "name": "ArianaGrande"
+      },
+      {
+        "name": "NickiMinaj"
+      }
+    ]
+  },
+  {
+    "name": "NoTearsLeftToCry",
+    "category": "Pop",
+    "artists":[
+      {
+        "name": "ArianaGrande"
+      }
+    ]
+  },
+  {
+    "name": "BreakFree",
+    "category": "Rock",
+    "artists":[
+      {
+        "name": "Zedd"
+      },
+      {
+        "name": "ArianaGrande"
+      }
+    ]
+  },
+  {
+    "name": "IntoYou",
+    "category": "Jazz",
+    "artists":[
+      {
+        "name": "ArianaGrande"
+      }
+    ]
+  },
+  {
+    "name": "GoodFeeling",
+    "category": "Blues",
+    "artists":[
+      {
+        "name": "FloRida"
+      }
+    ]
+  },
+  {
+    "name": "Clarity",
+    "category": "Pop",
+    "artists":[
+      {
+        "name": "Zedd"
+      }
+    ]
+  }
+]

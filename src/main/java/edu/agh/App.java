@@ -11,6 +11,7 @@ public class App
         CmdExecutor executor=new CmdExecutor();
         CmdReceiver receiver=new CmdReceiver(executor.getPossibleCommands());
         executor.execute("clear");
+        executor.getDataFromJson("db/");
         while(true)
         {
             try

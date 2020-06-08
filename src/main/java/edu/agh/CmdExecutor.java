@@ -7,7 +7,12 @@ import edu.agh.entities.Song;
 import edu.agh.services.ArtistService;
 import edu.agh.services.ListenerService;
 import edu.agh.services.SongService;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.neo4j.ogm.session.Session;
+
+import java.io.FileReader;
 import java.util.*;
 import static edu.agh.Commands.*;
 
@@ -171,9 +176,60 @@ public class CmdExecutor {
                 FIND_SONGS_BY_ARTIST_CMD_WITH_OPTIONS));
     }
 
-    //@TODO method to inject the data from JSON to database
+    //@TODO you can refactor it to make it more readable
+    //@TODO artists.json5 is probably redundant - you can decide what to do
     public void getDataFromJson(final String path)
     {
+        JSONParser parser = new JSONParser();
+        JSONArray songsArray;
+        JSONArray listenersArray;
 
+        try{
+            FileReader songsReader = new FileReader(path + "songs.json5");
+            FileReader listenersReader = new FileReader(path + "listeners.json5");
+            songsArray = (JSONArray) parser.parse(songsReader);
+            listenersArray = (JSONArray) parser.parse(listenersReader);
+        }catch(Exception e){
+            System.out.println(e.toString());
+            e.printStackTrace();
+            return;
+        }
+
+        for(Object songObject : songsArray) {
+            StringBuilder commandBuilder = new StringBuilder("add_song ");
+
+            JSONObject song = (JSONObject) songObject;
+            commandBuilder.append((String) song.get("name")).append(" ");
+            commandBuilder.append((String) song.get("category")).append(" ");
+
+            JSONArray artistsArray = (JSONArray) song.get("artists");
+            for(Object artistObject : artistsArray) {
+                JSONObject artist = (JSONObject) artistObject;
+                commandBuilder.append((String) artist.get("name")).append(" ");
+            }
+
+            execute(commandBuilder.toString());
+        }
+
+        for(Object listenerObject : listenersArray){
+            StringBuilder createCommand = new StringBuilder("add_listener ");
+
+            JSONObject listener = (JSONObject) listenerObject;
+            String name = (String) listener.get("name");
+            createCommand.append(name);
+            execute(createCommand.toString());
+
+            JSONArray viewedSongs = (JSONArray) listener.get("viewed_songs");
+            for(Object songObject : viewedSongs){
+                JSONObject song = (JSONObject) songObject;
+                execute("listener_viewed_song " + name + " " + song.get("name"));
+            }
+
+            JSONArray likedSongs = (JSONArray) listener.get("liked_songs");
+            for(Object songObject : likedSongs){
+                JSONObject song = (JSONObject) songObject;
+                execute("listener_like_song " + name + " " + song.get("name"));
+            }
+        }
     }
 }

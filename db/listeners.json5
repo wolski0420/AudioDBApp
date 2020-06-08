@@ -1,0 +1,157 @@
+[
+  {
+    "name": "Jan",
+    "viewed_songs": [
+      {
+        "name": "WakeMeUp"
+      },
+      {
+        "name": "Titanium"
+      },
+      {
+        "name": "Clarity"
+      },
+      {
+        "name": "SOS"
+      }
+    ],
+    "liked_songs": [
+      {
+        "name": "SOS"
+      },
+      {
+        "name": "WakeMeUp"
+      },
+      {
+        "name": "Clarity"
+      }
+    ]
+  },
+  {
+    "name": "Konrad",
+    "viewed_songs": [
+      {
+        "name": "CheapThrills"
+      }
+    ],
+    "liked_songs": [
+      {
+        "name": "CheapThrills"
+      }
+    ]
+  },
+  {
+    "name": "Lukasz",
+    "viewed_songs": [
+      {
+        "name": "Holiday"
+      },
+      {
+        "name": "Clarity"
+      },
+      {
+        "name": "WakeMeUp"
+      },
+      {
+        "name": "GoodFeeling"
+      },
+      {
+        "name": "ClubCantHandleMe"
+      },
+      {
+        "name": "WhereThemGirlsAt"
+      },
+      {
+        "name": "LoversOnTheSun"
+      },
+      {
+        "name": "ElasticHeart"
+      }
+    ],
+    "liked_songs": [
+      {
+        "name": "Holiday"
+      },
+      {
+        "name": "Clarity"
+      },
+      {
+        "name": "WakeMeUp"
+      },
+      {
+        "name": "GoodFeeling"
+      },
+      {
+        "name": "WhereThemGirlsAt"
+      },
+      {
+        "name": "LoversOnTheSun"
+      },
+      {
+        "name": "ElasticHeart"
+      }
+    ]
+  },
+  {
+    "name": "Pawel",
+    "viewed_songs": [
+      {
+        "name": "SheWolf"
+      },
+      {
+        "name": "Anaconda"
+      },
+      {
+        "name": "Titanium"
+      },
+      {
+        "name": "IntoYou"
+      },
+      {
+        "name": "SOS"
+      },
+      {
+        "name": "INeedADollar"
+      },
+      {
+        "name": "Dangerous"
+      }
+    ],
+    "liked_songs": [
+      {
+        "name": "SOS"
+      },
+      {
+        "name": "INeedADollar"
+      },
+      {
+        "name": "Dangerous"
+      }
+    ]
+  },
+  {
+    "name": "Alicja",
+    "viewed_songs": [
+      {
+        "name": "MadLove"
+      },
+      {
+        "name": "Chandelier"
+      },
+      {
+        "name": "NoTearsLeftToCry"
+      },
+      {
+        "name": "SideToSide"
+      }
+    ],
+    "liked_songs": [
+      {
+        "name": "NoTearsLeftToCry"
+      },
+      {
+        "name": "SideToSide"
+      }
+    ]
+  }
+]

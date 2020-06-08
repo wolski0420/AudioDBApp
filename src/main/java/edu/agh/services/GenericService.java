@@ -12,7 +12,7 @@ import java.util.Map;
 public abstract class GenericService<T extends Entity> implements Service<T> {
 
     private static final int DEPTH_LIST=0;
-    private static final int DEPTH_ENTITY=2;
+    private static final int DEPTH_ENTITY=1;
     protected Session session= Neo4jSessionFactory.getInstance().openNeo4jSession();
     protected Neo4jSessionFactory sessionFactory=Neo4jSessionFactory.getInstance();
     protected CypherExecutor executor=new BoltCypherExecutor(session);
