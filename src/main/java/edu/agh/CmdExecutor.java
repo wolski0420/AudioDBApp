@@ -177,7 +177,7 @@ public class CmdExecutor {
     }
 
     //@TODO you can refactor it to make it more readable
-    //@TODO artists.json5 is probably redundant - you can decide what to do
+    //@TODO artists.json5 is probably redundant - you can decide what to do - delete or stay
     public void getDataFromJson(final String path)
     {
         JSONParser parser = new JSONParser();
