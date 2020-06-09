@@ -1,4 +1,4 @@
-package edu.agh;
+package edu.agh.cmdUtils;
 
 public final class Commands {
     public static final String CLEAR="clear";
@@ -32,6 +32,5 @@ public final class Commands {
     public static final String FIND_SONGS_BY_ARTIST_CMD = "find_songs_by_artist";
     public static final String FIND_SONGS_BY_ARTIST_CMD_WITH_OPTIONS = FIND_SONGS_BY_ARTIST_CMD + " [artist_name]";
 
-    public static final String TEST_CMD ="test";
     public static final String QUIT_CMD ="quit";
 }

@@ -1,5 +1,6 @@
-package edu.agh;
+package edu.agh.cmdUtils;
 
+import edu.agh.services.Neo4jSessionFactory;
 import edu.agh.entities.Artist;
 import edu.agh.entities.Category;
 import edu.agh.entities.Listener;
@@ -7,22 +8,17 @@ import edu.agh.entities.Song;
 import edu.agh.services.ArtistService;
 import edu.agh.services.ListenerService;
 import edu.agh.services.SongService;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.neo4j.ogm.session.Session;
 
-import java.io.FileReader;
 import java.util.*;
-import static edu.agh.Commands.*;
+import static edu.agh.cmdUtils.Commands.*;
 
 public class CmdExecutor {
     private final SongService songService=new SongService();
     private final ListenerService listenerService=new ListenerService();
     private final ArtistService artistService = new ArtistService();
 
-    //the command should look like, eg: add_song title category artist artist artist
-    void execute(String cmd)
+    public void execute(String cmd)
     {
         final String[] words=cmd.split("\\s+");
 
@@ -117,7 +113,7 @@ public class CmdExecutor {
         }
         else if(words[0].equalsIgnoreCase(FIND_SONGS_BY_ARTIST_CMD)){
             if(words.length < 2){
-                System.out.println("Bad format! Tyep: " + FIND_SONGS_BY_ARTIST_CMD_WITH_OPTIONS);
+                System.out.println("Bad format! Type: " + FIND_SONGS_BY_ARTIST_CMD_WITH_OPTIONS);
                 return;
             }
 
@@ -129,32 +125,6 @@ public class CmdExecutor {
             session.query("MATCH (n) DETACH DELETE n",Collections.emptyMap());
             Neo4jSessionFactory.getInstance().closeSession();
         }
-        else if(words[0].equalsIgnoreCase(TEST_CMD))
-        {
-            //execute("clear");
-            Artist a1=new Artist("Adele");
-            Artist a2=new Artist("Madele");
-            Song s1=new Song("Hello",Category.Blues,Arrays.asList(a1,a2));
-            a1.addSong(Collections.singletonList(s1));
-            a2.addSong(Collections.singletonList(s1));
-            Song s2=new Song("Goodbye",Category.Blues,Collections.singletonList(a1));
-            a1.addSong(Collections.singletonList(s2));
-            Listener l1=new Listener("Konrad",Collections.singletonList(s1),Arrays.asList(s1,s2));
-            Listener l2=new Listener("Jan",new ArrayList<>(),Collections.singletonList(s1));
-            songService.createOrUpdate(s1);
-            songService.createOrUpdate(s2);
-            songService.closeSession();
-            listenerService.createOrUpdate(l1);
-            listenerService.createOrUpdate(l2);
-
-            listenerService.getRecommendationsByCategory(l1.getName()).forEach(System.out::println);
-            listenerService.getRecommendationsByArtist(l1.getName()).forEach(System.out::println);
-            listenerService.getRecommendationsBySimilarListeners(l1.getName()).forEach(System.out::println);
-            listenerService.getRecommendationsByCategory(l2.getName()).forEach(System.out::println);
-            listenerService.getRecommendationsByArtist(l2.getName()).forEach(System.out::println);
-            listenerService.getRecommendationsBySimilarListeners(l2.getName()).forEach(System.out::println);
-            listenerService.closeSession();
-        }
         else if(words[0].equalsIgnoreCase(QUIT_CMD))
         {
             System.exit(0);
@@ -164,7 +134,7 @@ public class CmdExecutor {
 
     public List<String> getPossibleCommands()
     {
-        return new ArrayList<String>(Arrays.asList(ADD_ARTIST_CMD_WITH_OPTIONS,
+        return new ArrayList<>(Arrays.asList(ADD_ARTIST_CMD_WITH_OPTIONS,
                 ADD_SONG_CMD_WITH_OPTIONS,
                 ADD_LISTENER_CMD_WITH_OPTIONS,
                 GET_RECOMMENDATION_BY_CATEGORY_CMD_WITH_OPTIONS,
@@ -176,60 +146,22 @@ public class CmdExecutor {
                 FIND_SONGS_BY_ARTIST_CMD_WITH_OPTIONS));
     }
 
-    //@TODO you can refactor it to make it more readable
-    //@TODO artists.json5 is probably redundant - you can decide what to do - delete or stay
     public void getDataFromJson(final String path)
     {
-        JSONParser parser = new JSONParser();
-        JSONArray songsArray;
-        JSONArray listenersArray;
+        DBFromJSONReader dbFromJSONReader;
+        try
+        {
+            dbFromJSONReader=new DBFromJSONReader(path + "songs.json5",path + "listeners.json5");
+            dbFromJSONReader.getSongsParameters().forEach((params)->this.execute(String.format("%s %s",ADD_SONG_CMD,params)));
+            dbFromJSONReader.getListenersNames().forEach(name->this.execute(String.format("%s %s",ADD_LISTENER_CMD,name)));
+            dbFromJSONReader.getListenersViewedParameters().forEach(parameters->this.execute(String.format("%s %s",LISTENER_VIEWED_SONG_CMD,parameters)));
+            dbFromJSONReader.getListenersLikedParameters().forEach(parameters->this.execute(String.format("%s %s",LISTENER_LIKE_SONG_CMD,parameters)));
 
-        try{
-            FileReader songsReader = new FileReader(path + "songs.json5");
-            FileReader listenersReader = new FileReader(path + "listeners.json5");
-            songsArray = (JSONArray) parser.parse(songsReader);
-            listenersArray = (JSONArray) parser.parse(listenersReader);
-        }catch(Exception e){
-            System.out.println(e.toString());
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
-            return;
         }
 
-        for(Object songObject : songsArray) {
-            StringBuilder commandBuilder = new StringBuilder("add_song ");
-
-            JSONObject song = (JSONObject) songObject;
-            commandBuilder.append((String) song.get("name")).append(" ");
-            commandBuilder.append((String) song.get("category")).append(" ");
-
-            JSONArray artistsArray = (JSONArray) song.get("artists");
-            for(Object artistObject : artistsArray) {
-                JSONObject artist = (JSONObject) artistObject;
-                commandBuilder.append((String) artist.get("name")).append(" ");
-            }
-
-            execute(commandBuilder.toString());
-        }
-
-        for(Object listenerObject : listenersArray){
-            StringBuilder createCommand = new StringBuilder("add_listener ");
-
-            JSONObject listener = (JSONObject) listenerObject;
-            String name = (String) listener.get("name");
-            createCommand.append(name);
-            execute(createCommand.toString());
-
-            JSONArray viewedSongs = (JSONArray) listener.get("viewed_songs");
-            for(Object songObject : viewedSongs){
-                JSONObject song = (JSONObject) songObject;
-                execute("listener_viewed_song " + name + " " + song.get("name"));
-            }
-
-            JSONArray likedSongs = (JSONArray) listener.get("liked_songs");
-            for(Object songObject : likedSongs){
-                JSONObject song = (JSONObject) songObject;
-                execute("listener_like_song " + name + " " + song.get("name"));
-            }
-        }
     }
 }

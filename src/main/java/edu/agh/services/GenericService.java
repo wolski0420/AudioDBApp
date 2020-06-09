@@ -1,6 +1,5 @@
 package edu.agh.services;
 
-import edu.agh.Neo4jSessionFactory;
 import edu.agh.entities.Entity;
 import org.neo4j.ogm.session.Session;
 

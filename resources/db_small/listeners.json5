@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Jan",
+    "viewed_songs": [
+      {
+        "name": "WakeMeUp"
+      }
+    ],
+    "liked_songs": [
+      {
+        "name": "WakeMeUp"
+      }
+    ]
+  },
+  {
+    "name": "Konrad",
+    "viewed_songs": [
+      {
+        "name": "WakeMeUp"
+      },
+      {
+        "name": "CheapThrills"
+      }
+    ],
+    "liked_songs": [
+      {
+        "name": "CheapThrills"
+      }
+    ]
+  },
+  {
+    "name": "Lukasz",
+    "viewed_songs": [
+      {
+        "name": "Holiday"
+      },
+      {
+        "name": "Clarity"
+      },
+      {
+        "name": "WakeMeUp"
+      },
+    ],
+    "liked_songs": [
+      {
+        "name": "Holiday"
+      },
+      {
+        "name": "Clarity"
+      },
+    ]
+  },
+  {
+    "name": "Pawel",
+    "viewed_songs": [
+      {
+        "name": "Anaconda"
+      }
+    ],
+    "liked_songs": [
+    ]
+  },
+  {
+    "name": "Alicja",
+    "viewed_songs": [
+      {
+        "name": "Anaconda"
+      },
+      {
+        "name": "SideToSide"
+      }
+    ],
+    "liked_songs": [
+      {
+        "name": "Anaconda"
+      },
+      {
+        "name": "SideToSide"
+      }
+    ]
+  }
+]

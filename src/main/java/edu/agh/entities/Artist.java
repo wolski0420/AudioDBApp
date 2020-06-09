@@ -33,7 +33,6 @@ public class Artist extends Entity {
         this.songs.addAll(songs);
     }
 
-    // not sure what is better: id/name
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

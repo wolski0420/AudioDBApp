@@ -1,0 +1,67 @@
+[
+  {
+    "name": "WakeMeUp",
+    "category": "Pop",
+    "artists":[
+      {
+        "name": "Avicii"
+      },
+      {
+        "name": "AloeBlacc"
+      }
+    ]
+  },
+  {
+    "name": "CheapThrills",
+    "category": "Blues",
+    "artists":[
+      {
+        "name": "Sia"
+      },
+      {
+        "name": "SeanPaul"
+      }
+    ]
+  },
+  {
+    "name": "Holiday",
+    "category": "Rock",
+    "artists":[
+      {
+        "name": "Avicii"
+      }
+    ]
+  },
+
+  {
+    "name": "Clarity",
+    "category": "Pop",
+    "artists":[
+      {
+        "name": "Zedd"
+      }
+    ]
+  },
+  {
+    "name": "Anaconda",
+    "category": "Jazz",
+    "artists":[
+      {
+        "name": "NickiMinaj"
+      }
+    ]
+  },
+
+  {
+    "name": "SideToSide",
+    "category": "Blues",
+    "artists":[
+      {
+        "name": "ArianaGrande"
+      },
+      {
+        "name": "NickiMinaj"
+      }
+    ]
+  }
+]

@@ -1,4 +1,4 @@
-package edu.agh;
+package edu.agh.cmdUtils;
 
 import java.util.List;
 import java.util.Scanner;
@@ -11,7 +11,7 @@ public class CmdReceiver {
         this.possibleCmds=possibleCmds;
     }
 
-    String receiveCommand()
+    public String receiveCommand()
     {
         System.out.println("\nPossible commands: ");
         possibleCmds.forEach(System.out::println);
